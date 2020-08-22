@@ -4,6 +4,9 @@ using System.Text;
 
 namespace BugTracker.Data.Repositories
 {
+    /// <summary>
+    /// Unit of work design pattern. Used as an additional layer between the db and the logic.
+    /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BugTrackerDBContext _context;
@@ -26,6 +29,11 @@ namespace BugTracker.Data.Repositories
         }
     }
 
+
+
+    /// <summary>
+    /// IUnitOfWork DI Interface
+    /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository Users { get; }

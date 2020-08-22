@@ -7,6 +7,10 @@ using System.Text;
 
 namespace BugTracker.Data.Repositories
 {
+    /// <summary>
+    /// Base repository class. Handles general db operations.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         protected readonly BugTrackerDBContext _context;
@@ -86,6 +90,12 @@ namespace BugTracker.Data.Repositories
         }
     }
 
+
+
+    /// <summary>
+    /// IBaseRepository DI interface
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public interface IBaseRepository<TEntity> where TEntity : class
     {
         TEntity Get(int id);
