@@ -8,7 +8,7 @@ namespace BugTracker.Data
         public Role()
         {
             Permission = new HashSet<Permission>();
-            User = new HashSet<User>();
+            Userrole = new HashSet<Userrole>();
         }
 
         public int RoleId { get; set; }
@@ -21,6 +21,6 @@ namespace BugTracker.Data
         public int EditedBy { get; set; }
 
         public virtual ICollection<Permission> Permission { get; set; }
-        public virtual ICollection<User> User { get; set; }
+        public virtual ICollection<Userrole> Userrole { get; set; }
     }
 }

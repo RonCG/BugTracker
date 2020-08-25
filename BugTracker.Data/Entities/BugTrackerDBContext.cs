@@ -31,6 +31,7 @@ namespace BugTracker.Data
         public virtual DbSet<Tasklog> Tasklog { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Userproject> Userproject { get; set; }
+        public virtual DbSet<Userrole> Userrole { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -395,25 +396,19 @@ namespace BugTracker.Data
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
-                entity.Property(e => e.RoleId).HasColumnName("RoleID");
-
                 entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.User)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_USER_ROLE");
             });
 
             modelBuilder.Entity<Userproject>(entity =>
             {
-                entity.HasKey(e => new { e.Projectid, e.UserId });
+                entity.HasKey(e => new { e.ProjectId, e.UserId });
 
                 entity.ToTable("USERPROJECT");
+
+                entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -423,7 +418,7 @@ namespace BugTracker.Data
 
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.Userproject)
-                    .HasForeignKey(d => d.Projectid)
+                    .HasForeignKey(d => d.ProjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USERPROJECT_PROJECT");
 
@@ -432,6 +427,34 @@ namespace BugTracker.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USERPROJECT_USER");
+            });
+
+            modelBuilder.Entity<Userrole>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId })
+                    .HasName("USERROLE_PK");
+
+                entity.ToTable("USERROLE");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.RoleId).HasColumnName("RoleID");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EditDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Userrole)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_USERROLE_ROLE");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Userrole)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_USERROLE_USER");
             });
 
             OnModelCreatingPartial(modelBuilder);

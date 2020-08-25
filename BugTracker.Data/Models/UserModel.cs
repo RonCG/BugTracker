@@ -10,7 +10,6 @@ namespace BugTracker.Data.Models
     public class UserModel
     {
         public int UserId { get; set; }
-        public int RoleId { get; set; }
         public string RoleName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -22,12 +21,10 @@ namespace BugTracker.Data.Models
             return new UserModel
             {
                 UserId = v.UserId,
-                RoleId = v.RoleId,
-                RoleName = v.Role.Name,
                 FirstName = v.FirstName,
                 LastName = v.LastName,
                 UserName = v.UserName,
-                Email = v.Email
+                Email = v.Email                
             };
         }
     }

@@ -5,7 +5,7 @@ namespace BugTracker.Data
 {
     public partial class Userproject
     {
-        public int Projectid { get; set; }
+        public int ProjectId { get; set; }
         public int UserId { get; set; }
         public bool Active { get; set; }
         public DateTime CreateDate { get; set; }

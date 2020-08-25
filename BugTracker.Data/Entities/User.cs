@@ -8,10 +8,10 @@ namespace BugTracker.Data
         public User()
         {
             Userproject = new HashSet<Userproject>();
+            Userrole = new HashSet<Userrole>();
         }
 
         public int UserId { get; set; }
-        public int RoleId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
@@ -23,7 +23,7 @@ namespace BugTracker.Data
         public DateTime EditDate { get; set; }
         public int EditedBy { get; set; }
 
-        public virtual Role Role { get; set; }
         public virtual ICollection<Userproject> Userproject { get; set; }
+        public virtual ICollection<Userrole> Userrole { get; set; }
     }
 }
