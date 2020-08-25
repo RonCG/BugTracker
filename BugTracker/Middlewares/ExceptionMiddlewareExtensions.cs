@@ -6,7 +6,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace BugTracker.Web.Extensions
+namespace BugTracker.Web.Middlewares
 {
     public static class ExceptionMiddlewareExtensions
     {

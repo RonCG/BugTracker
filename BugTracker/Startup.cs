@@ -7,7 +7,7 @@ using BugTracker.Data;
 using BugTracker.Data.Helpers;
 using BugTracker.Data.Repositories;
 using BugTracker.Logic.Logic;
-using BugTracker.Web.Extensions;
+using BugTracker.Web.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
