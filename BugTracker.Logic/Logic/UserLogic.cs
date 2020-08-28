@@ -1,4 +1,5 @@
-﻿using BugTracker.Data.Helpers;
+﻿using BugTracker.Data;
+using BugTracker.Data.Helpers;
 using BugTracker.Data.Models;
 using BugTracker.Data.Repositories;
 using Microsoft.Extensions.Options;
@@ -6,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -41,7 +43,7 @@ namespace BugTracker.Logic.Logic
             {
                 FirstName = "Ronny",
                 LastName = "Cordova",
-                RoleName = "Admin",
+                Roles = new List<string> { "Admin", "SuperAdmin" },
                 UserId = 1858
             };
         }
@@ -57,18 +59,19 @@ namespace BugTracker.Logic.Logic
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+            var claims = new List<Claim>
+            {
+                new Claim("userid", userInfo.UserId.ToString()),
+                new Claim("username", userInfo.FirstName + " " + userInfo.LastName)                
+            };
+
+            claims.AddRange(userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim("userid", userInfo.UserId.ToString()),
-                    new Claim("firstname", userInfo.FirstName),
-                    new Claim("lastname",userInfo.LastName),
-                    new Claim("username", userInfo.UserName),
-                    new Claim(ClaimTypes.Role, userInfo.RoleName.ToString()),
-                }),
-                Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddDays(_jwtSettings.DurationDays)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);

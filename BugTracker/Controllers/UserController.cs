@@ -26,6 +26,15 @@ namespace BugTracker.Web.Controllers
         }
 
 
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPost("test")]
+        public IActionResult Test()
+        {
+            string token = "only superadmin sees this";
+            return Ok(new { token });
+        }
+
+
 
         // POST: api/user/authenticate
         [AllowAnonymous]
