@@ -101,6 +101,28 @@ namespace BugTracker.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //override mapping to keep .net core from interferring with angular routing
+            app.MapWhen(
+                context =>
+                {
+                    var path = context.Request.Path.Value.ToLower();
+                    return path.Contains("/") &&
+                           !path.Contains(".js") &&
+                           !path.Contains("/api/") &&
+                           !path.Contains("/assets") &&
+                           !path.Contains(".ico");
+                },
+                branch =>
+                {
+                    branch.Use((context, next) =>
+                    {
+                        context.Request.Path = new PathString("/index.html");
+                        return next();
+                    });
+
+                    branch.UseStaticFiles();
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints

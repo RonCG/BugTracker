@@ -9,32 +9,28 @@ import {
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-    constructor(){}
+    constructor(
+        private router: Router
+    ){}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(
 
             catchError((error: HttpErrorResponse) => {
                 console.log(error);
-                let errorMessage = error.message;
-                if (error.error instanceof ErrorEvent) {
-                    //console.error('Client-Side error: ', error.error.message);
-                } else {
-                    //console.error('Server-Side error: ', error);
+                let errorMessage = error.error.message || error.message;
+                if (error.error instanceof ErrorEvent) { //Client-side error
+               
+                } else { //Server-side error
                     switch (error.status) {
-                        case 400:
-                            errorMessage = 'Username or password are invalid';
-                            break;
                         case 401:
-                            errorMessage = 'Not authorized!!!';
-                            break;
-                        case 404:
-                            break;
-                        default:
+                            //show message 'No permissions' with message service
+                            this.router.navigate(['/home']);
                             break;
                     }
                 }

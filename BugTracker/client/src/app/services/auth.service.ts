@@ -12,12 +12,14 @@ import { tap, map } from 'rxjs/operators';
 export class AuthService {
 
     private currentUserSubject: BehaviorSubject<UserModel>;
+    public currentUser: Observable<UserModel>;
 
     constructor(
         private http: HttpClient,
         private router: Router
     ) {
         this.currentUserSubject = new BehaviorSubject<UserModel>(null);
+        this.currentUser = this.currentUserSubject.asObservable();
     }
 
     public setUserData(): UserModel {
@@ -26,7 +28,7 @@ export class AuthService {
             return null;
         
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return new UserModel(payload.userid, payload.username, payload.roles, token, new Date(payload.exp * 1000));
+        return new UserModel(payload.userid, payload.username, payload.role, token, new Date(payload.exp * 1000));
     }
 
     public get currentUserValue(): UserModel {

@@ -27,7 +27,7 @@ namespace BugTracker.Web.Controllers
 
 
         [Authorize(Roles = "SuperAdmin")]
-        [HttpPost("test")]
+        [HttpGet("test")]
         public IActionResult Test()
         {
             string token = "only superadmin sees this";
@@ -44,7 +44,7 @@ namespace BugTracker.Web.Controllers
             var user = _userLogic.AuthenticateUser(model);
 
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "Username or password is incorrect"));
 
             string token = _userLogic.GenerateJWT(user);
             return Ok(new { token });
