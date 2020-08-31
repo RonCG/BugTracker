@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { ErrorInterceptor } from './middleware/error.interceptor';
 import { AuthInterceptor } from './middleware/auth.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
       BrowserModule,
+      BrowserAnimationsModule,
       AppRoutingModule,
       HttpClientModule,
       ReactiveFormsModule,
