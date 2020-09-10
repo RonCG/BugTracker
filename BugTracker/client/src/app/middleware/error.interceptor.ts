@@ -30,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     switch (error.status) {
                         case 401:
                             //show message 'No permissions' with message service
-                            this.router.navigate(['/home']);
+                            this.router.navigate(['/login']);
                             break;
                     }
                 }

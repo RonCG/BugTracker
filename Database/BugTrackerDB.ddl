@@ -269,7 +269,7 @@ CREATE TABLE "USER"
      UserName VARCHAR (50) NOT NULL , 
      Email VARCHAR (100) NOT NULL , 
      Password VARCHAR (255) NOT NULL , 
-     Active BIT NOT NULL , 
+     StatusID INTEGER NOT NULL , 
      CreateDate DATETIME NOT NULL , 
      CreatedBy INTEGER NOT NULL , 
      EditDate DATETIME NOT NULL , 
@@ -461,6 +461,20 @@ ALTER TABLE TASK
     ON UPDATE NO ACTION 
 GO
 
+ALTER TABLE "USER" 
+    ADD CONSTRAINT FK_USER_STATUS FOREIGN KEY 
+    ( 
+     StatusID
+    ) 
+    REFERENCES STATUS 
+    ( 
+     StatusID 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+
 ALTER TABLE USERPROJECT 
     ADD CONSTRAINT FK_USERPROJECT_PROJECT FOREIGN KEY 
     ( 
@@ -519,7 +533,7 @@ GO
 -- 
 -- CREATE TABLE                            17
 -- CREATE INDEX                             0
--- ALTER TABLE                             32
+-- ALTER TABLE                             33
 -- CREATE VIEW                              0
 -- ALTER VIEW                               0
 -- CREATE PACKAGE                           0

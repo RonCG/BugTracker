@@ -10,6 +10,7 @@ namespace BugTracker.Data
             Bug = new HashSet<Bug>();
             Project = new HashSet<Project>();
             Task = new HashSet<Task>();
+            User = new HashSet<User>();
         }
 
         public int StatusId { get; set; }
@@ -20,5 +21,6 @@ namespace BugTracker.Data
         public virtual ICollection<Bug> Bug { get; set; }
         public virtual ICollection<Project> Project { get; set; }
         public virtual ICollection<Task> Task { get; set; }
+        public virtual ICollection<User> User { get; set; }
     }
 }

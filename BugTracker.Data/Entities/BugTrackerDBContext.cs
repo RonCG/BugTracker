@@ -396,10 +396,18 @@ namespace BugTracker.Data
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
+                entity.Property(e => e.StatusId).HasColumnName("StatusID");
+
                 entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.User)
+                    .HasForeignKey(d => d.StatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_USER_STATUS");
             });
 
             modelBuilder.Entity<Userproject>(entity =>
