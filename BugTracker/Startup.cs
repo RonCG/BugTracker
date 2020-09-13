@@ -47,9 +47,11 @@ namespace BugTracker.Web
             services.AddHttpContextAccessor();
             services.AddTransient<IRequestUser, RequestUser>();
 
-            //configure jwt settings 
+            //configure app settings 
             var jwtSettingsSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSettingsSection);
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.Configure<HashingOptions>(Configuration.GetSection("HashingOptions"));
 
             //configure jwt authentication
             var jwtSettings = jwtSettingsSection.Get<JWTSettings>();
@@ -77,6 +79,8 @@ namespace BugTracker.Web
             //add custom services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserLogic, UserLogic>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddControllers();
         }

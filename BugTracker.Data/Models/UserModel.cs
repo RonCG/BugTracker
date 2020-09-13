@@ -14,6 +14,8 @@ namespace BugTracker.Data.Models
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
+        public int StatusID { get; set; }
         public List<string> Roles { get; set; }
 
         public static explicit operator UserModel(User v)
@@ -27,5 +29,15 @@ namespace BugTracker.Data.Models
                 Email = v.Email                
             };
         }
+    }
+
+
+
+
+    public static class UserStatus
+    {
+        public static int Active = 1;
+        public static int Pending = 2;
+        public static int Inactive = 3;
     }
 }

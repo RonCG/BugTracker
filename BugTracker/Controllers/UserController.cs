@@ -26,16 +26,6 @@ namespace BugTracker.Web.Controllers
         }
 
 
-        [Authorize(Roles = "SuperAdmin")]
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            string token = "only superadmin sees this";
-            return Ok(new { token });
-        }
-
-
-
         // POST: api/user/authenticate
         [AllowAnonymous]
         [HttpPost("authenticate")]
@@ -48,6 +38,29 @@ namespace BugTracker.Web.Controllers
 
             string token = _userLogic.GenerateJWT(user);
             return Ok(new { token });
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("resetpassword")]
+        public IActionResult ResetPassword([FromBody] ResetPasswordModel data)
+        {
+            var result = _userLogic.ResetPassword(data);
+            if(result)
+                return Ok(result); 
+
+            return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "Something went wrong. Please try again"));
+        }
+
+
+
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] UserModel user)
+        {
+            return Ok(_userLogic.CreateNew(user));
         }
     }
 }
