@@ -20,15 +20,13 @@ namespace BugTracker.Web.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next)
         {
-            _logger = logger;
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext)
+        public async Task InvokeAsync(HttpContext httpContext, ICustomLogger logger)
         {
             try
             {
@@ -36,13 +34,14 @@ namespace BugTracker.Web.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, ex, logger);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception, ICustomLogger logger)
         {
+            logger.LogError($"Something went wrong: {exception}");
+
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

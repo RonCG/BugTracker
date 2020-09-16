@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BugTracker.Data.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,11 +12,13 @@ namespace BugTracker.Data.Repositories
     {
         private readonly BugTrackerDBContext _context;
         public IUserRepository Users { get; private set; }
+        public IErrorLogRepository ErrorLog { get; private set; }
         
         public UnitOfWork(BugTrackerDBContext context)
         {
             _context = context;
             Users = new UserRepository(_context);
+            ErrorLog = new ErrorLogRepository(_context);
         }
 
         public int Complete()
@@ -37,6 +40,7 @@ namespace BugTracker.Data.Repositories
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository Users { get; }
+        IErrorLogRepository ErrorLog { get; }
         int Complete();
     }
 }

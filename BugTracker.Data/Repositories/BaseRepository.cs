@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BugTracker.Data.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,23 +71,30 @@ namespace BugTracker.Data.Repositories
         }
 
 
-        public T SetCreateVars<T>(T model)
+        private T SetCreateVars<T>(T model)
         {
             model = SetUpdateVars(model);
-
+         
             ((dynamic)model).CreateDate = DateTime.Now;
-            ((dynamic)model).CreatedBy = 1;
+            ((dynamic)model).CreatedBy = SetUserID();
 
             return model;
         }
 
 
-        public T SetUpdateVars<T>(T model)
+        private T SetUpdateVars<T>(T model)
         {
             ((dynamic)model).EditDate = DateTime.Now;
-            ((dynamic)model).EditedBy = 1;
+            ((dynamic)model).EditedBy = SetUserID();
 
             return model;
+        }
+
+
+        private int SetUserID()
+        {
+            //int UserID = _requestUser != null ? _requestUser.UserID : -1;
+            return -1;
         }
     }
 
@@ -110,7 +118,5 @@ namespace BugTracker.Data.Repositories
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entity);
 
-        T SetCreateVars<T>(T model);
-        T SetUpdateVars<T>(T model);
     }
 }

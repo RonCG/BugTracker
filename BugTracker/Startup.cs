@@ -78,9 +78,10 @@ namespace BugTracker.Web
 
             //add custom services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserLogic, UserLogic>();
+            services.AddScoped<ICustomLogger, CustomLogger>();    
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUserLogic, UserLogic>();
 
             services.AddControllers();
         }

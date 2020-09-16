@@ -20,6 +20,7 @@ namespace BugTracker.Data
         public virtual DbSet<Buglog> Buglog { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Element> Element { get; set; }
+        public virtual DbSet<Errorlog> Errorlog { get; set; }
         public virtual DbSet<Lookup> Lookup { get; set; }
         public virtual DbSet<Lookuptype> Lookuptype { get; set; }
         public virtual DbSet<Passwordrequest> Passwordrequest { get; set; }
@@ -157,13 +158,22 @@ namespace BugTracker.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Errorlog>(entity =>
+            {
+                entity.ToTable("ERRORLOG");
+
+                entity.Property(e => e.ErrorLogId).HasColumnName("ErrorLogID");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorDescription).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Lookup>(entity =>
             {
                 entity.ToTable("LOOKUP");
 
-                entity.Property(e => e.LookUpId)
-                    .HasColumnName("LookUpID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.LookUpId).HasColumnName("LookUpID");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -183,9 +193,7 @@ namespace BugTracker.Data
             {
                 entity.ToTable("LOOKUPTYPE");
 
-                entity.Property(e => e.LookUpTypeId)
-                    .HasColumnName("LookUpTypeID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.LookUpTypeId).HasColumnName("LookUpTypeID");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
