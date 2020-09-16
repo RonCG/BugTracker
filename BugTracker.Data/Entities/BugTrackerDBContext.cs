@@ -22,6 +22,7 @@ namespace BugTracker.Data
         public virtual DbSet<Element> Element { get; set; }
         public virtual DbSet<Lookup> Lookup { get; set; }
         public virtual DbSet<Lookuptype> Lookuptype { get; set; }
+        public virtual DbSet<Passwordrequest> Passwordrequest { get; set; }
         public virtual DbSet<Permission> Permission { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Role> Role { get; set; }
@@ -32,15 +33,6 @@ namespace BugTracker.Data
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Userproject> Userproject { get; set; }
         public virtual DbSet<Userrole> Userrole { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=BugTrackerDB;User=Ron;Password=***REMOVED***;");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -201,6 +193,30 @@ namespace BugTracker.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Passwordrequest>(entity =>
+            {
+                entity.ToTable("PASSWORDREQUEST");
+
+                entity.Property(e => e.PasswordRequestId).HasColumnName("PasswordRequestID");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EditDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Passwordrequest)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PASSWORDREQUEST_USER");
+            });
+
             modelBuilder.Entity<Permission>(entity =>
             {
                 entity.ToTable("PERMISSION");
@@ -276,9 +292,7 @@ namespace BugTracker.Data
             {
                 entity.ToTable("STATUS");
 
-                entity.Property(e => e.StatusId)
-                    .HasColumnName("StatusID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.StatusId).HasColumnName("StatusID");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -298,9 +312,7 @@ namespace BugTracker.Data
             {
                 entity.ToTable("TABLE");
 
-                entity.Property(e => e.TableId)
-                    .HasColumnName("TableID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.TableId).HasColumnName("TableID");
 
                 entity.Property(e => e.Name)
                     .IsRequired()

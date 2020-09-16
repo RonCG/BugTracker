@@ -7,6 +7,7 @@ namespace BugTracker.Data
     {
         public User()
         {
+            Passwordrequest = new HashSet<Passwordrequest>();
             Userproject = new HashSet<Userproject>();
             Userrole = new HashSet<Userrole>();
         }
@@ -24,6 +25,7 @@ namespace BugTracker.Data
         public int EditedBy { get; set; }
 
         public virtual Status Status { get; set; }
+        public virtual ICollection<Passwordrequest> Passwordrequest { get; set; }
         public virtual ICollection<Userproject> Userproject { get; set; }
         public virtual ICollection<Userrole> Userrole { get; set; }
     }
