@@ -51,15 +51,6 @@ namespace BugTracker.Logic.Logic
             }
 
             return retVal;
-            //if (request.Username != "Ronny" || request.Password != "1234")
-            //    return null;
-            //return new UserModel
-            //{
-            //    FirstName = "Ronny",
-            //    LastName = "Cordova",
-            //    Roles = new List<string> { "Admin", "SuperAdmin" },
-            //    UserId = 1858
-            //};
         }
 
 
@@ -97,20 +88,24 @@ namespace BugTracker.Logic.Logic
         public bool ResetPassword(ResetPasswordModel data)
         {
             bool retVal = false;
-            //if requestID exists...
-            if (true)
+            var passwordRequest = _db.PasswordRequest.Find(x => x.Token == data.Token && x.UserId == data.UserID && x.Active == true).FirstOrDefault();
+            if (passwordRequest != null)
             {
-                User currentUser = new User(); //get the request record and get the userID from there...
-                currentUser.Password = _passwordHasher.Hash(data.NewPassword);
-                if (currentUser.StatusId == UserStatus.Pending)
-                    currentUser.StatusId = UserStatus.Active;
+                User user = _db.Users.Get(passwordRequest.UserId); 
+                if(user != null)
+                {
+                    user.Password = _passwordHasher.Hash(data.NewPassword);
+                    if (user.StatusId == UserStatus.Pending)
+                        user.StatusId = UserStatus.Active;
 
-                _db.Users.Update(currentUser);
+                    _db.Users.Update(user);
 
-                //set the request as inactive also...
-                _db.Complete();
+                    passwordRequest.Active = false;
+                    _db.PasswordRequest.Update(passwordRequest);
 
-                retVal = true;
+                    _db.Complete();
+                    retVal = true;
+                }
             }
 
             return retVal;
@@ -131,6 +126,18 @@ namespace BugTracker.Logic.Logic
             };
 
             _db.Users.Add(newUser);
+            _db.Complete();
+
+            //add user roles... 
+
+            Passwordrequest passwordRequest = new Passwordrequest
+            {
+                UserId = newUser.UserId,
+                Token = Guid.NewGuid().ToString(),
+                Active = true
+            };
+
+            _db.PasswordRequest.Add(passwordRequest);
             _db.Complete();
 
             _emailService.Send("***REMOVED***", newUser.Email, "Invite Test", "Hello!");            

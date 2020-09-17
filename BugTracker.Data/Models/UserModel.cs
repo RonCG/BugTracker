@@ -26,7 +26,8 @@ namespace BugTracker.Data.Models
                 FirstName = v.FirstName,
                 LastName = v.LastName,
                 UserName = v.UserName,
-                Email = v.Email                
+                Email = v.Email,
+                Roles = new List<string>()
             };
         }
     }
