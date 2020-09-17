@@ -11,14 +11,19 @@ namespace BugTracker.Data.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BugTrackerDBContext _context;
+        protected readonly IRequestUser _requestUser;
+
         public IUserRepository Users { get; private set; }
         public IErrorLogRepository ErrorLog { get; private set; }
+        public IPasswordRequestRepository PasswordRequest { get; private set; }
         
-        public UnitOfWork(BugTrackerDBContext context)
+        public UnitOfWork(BugTrackerDBContext context, IRequestUser requestUser)
         {
             _context = context;
-            Users = new UserRepository(_context);
-            ErrorLog = new ErrorLogRepository(_context);
+            _requestUser = requestUser;
+            Users = new UserRepository(_context, _requestUser);
+            ErrorLog = new ErrorLogRepository(_context, _requestUser);
+            PasswordRequest = new PasswordRequestRepository(_context, _requestUser);
         }
 
         public int Complete()
@@ -41,6 +46,8 @@ namespace BugTracker.Data.Repositories
     {
         IUserRepository Users { get; }
         IErrorLogRepository ErrorLog { get; }
+        IPasswordRequestRepository PasswordRequest { get; }
+
         int Complete();
     }
 }

@@ -15,10 +15,12 @@ namespace BugTracker.Data.Repositories
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         protected readonly BugTrackerDBContext _context;
+        protected readonly IRequestUser _requestUser;
 
-        protected BaseRepository(BugTrackerDBContext context)
+        protected BaseRepository(BugTrackerDBContext context, IRequestUser requestUser)
         {
             _context = context;
+            _requestUser = requestUser;
         }
 
         public IEnumerable<TEntity> GetAll()
@@ -93,8 +95,8 @@ namespace BugTracker.Data.Repositories
 
         private int SetUserID()
         {
-            //int UserID = _requestUser != null ? _requestUser.UserID : -1;
-            return -1;
+            int userID = _requestUser != null ? _requestUser.UserID : -1;
+            return userID;
         }
     }
 
