@@ -31,13 +31,12 @@ namespace BugTracker.Web.Controllers
         [HttpPost("authenticate")]
         public IActionResult AuthenticateUser([FromBody] AuthenticateModel model)
         {
-            var user = _userLogic.AuthenticateUser(model);
+            var jwtToken = _userLogic.AuthenticateUser(model);
 
-            if (user == null)
+            if (jwtToken == string.Empty)
                 return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "Username or password is incorrect"));
 
-            string token = _userLogic.GenerateJWT(user);
-            return Ok(new { token });
+            return Ok(new { jwtToken });
         }
 
 

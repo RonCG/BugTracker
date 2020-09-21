@@ -39,7 +39,7 @@ export class AuthService {
         return this.http.post<any>(`api/user/authenticate`, { username, password })
             .pipe(
                 map(response => {
-                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('token', response.jwtToken);
                     this.currentUserSubject.next(this.setUserData());
                     return response;
                 })

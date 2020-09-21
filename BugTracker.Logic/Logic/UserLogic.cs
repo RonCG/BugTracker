@@ -2,15 +2,9 @@
 using BugTracker.Data.Helpers;
 using BugTracker.Data.Models;
 using BugTracker.Data.Repositories;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+
 
 namespace BugTracker.Logic.Logic
 {
@@ -19,14 +13,14 @@ namespace BugTracker.Logic.Logic
     /// </summary>
     public class UserLogic : IUserLogic
     {
-        private readonly JWTSettings _jwtSettings;
+        private readonly IJWTFactory _jwtFactory;
         private readonly IUnitOfWork _repositories;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IEmailService _emailService;
 
-        public UserLogic(IOptions<JWTSettings> jwtSettings, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IEmailService emailService)
+        public UserLogic(IJWTFactory jwtFactory, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IEmailService emailService)
         {
-            _jwtSettings = jwtSettings.Value;
+            _jwtFactory = jwtFactory;
             _repositories = unitOfWork;
             _passwordHasher = passwordHasher;
             _emailService = emailService;         
@@ -39,48 +33,18 @@ namespace BugTracker.Logic.Logic
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public UserModel AuthenticateUser(AuthenticateModel request)
+        public string AuthenticateUser(AuthenticateModel request)
         {
-            UserModel userDetail = null;
-            var user = _repositories.Users.Find(x => x.UserName == request.Username && x.StatusId == UserStatus.Active).FirstOrDefault();     
+            string jwtToken = string.Empty;
+            var user = _repositories.Users.Find(x => x.UserName == request.Username && x.StatusId == UserStatus.Active).FirstOrDefault();
             if (user != null)
             {
                 var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, request.Password);
-                if (Verified)                
-                    userDetail = _repositories.Users.GetUserDetail(user.UserId);                 
+                if (Verified)
+                    jwtToken = _jwtFactory.GenerateJWT(_repositories.Users.GetUserDetail(user.UserId));
             }
 
-            return userDetail;
-        }
-
-
-
-        /// <summary>
-        /// Generates JWT token
-        /// </summary>
-        /// <param name="userInfo"></param>
-        /// <returns></returns>
-        public string GenerateJWT(UserModel userInfo)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-            var claims = new List<Claim>
-            {
-                new Claim("userid", userInfo.UserId.ToString()),
-                new Claim("username", userInfo.FirstName + " " + userInfo.LastName)                
-            };
-
-            claims.AddRange(userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Expires = DateTime.UtcNow.AddDays(_jwtSettings.DurationDays)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return jwtToken;
         }
 
 
@@ -154,9 +118,7 @@ namespace BugTracker.Logic.Logic
     /// </summary>
     public interface IUserLogic
     {
-        //IEnumerable<UserModel> GetUsers();
-        UserModel AuthenticateUser(AuthenticateModel request);
-        string GenerateJWT(UserModel userInfo);
+        string AuthenticateUser(AuthenticateModel request);
         UserModel CreateNew(UserModel user);
         bool ResetPassword(ResetPasswordModel data);
     }

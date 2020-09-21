@@ -81,6 +81,7 @@ namespace BugTracker.Web
             services.AddScoped<ICustomLogger, CustomLogger>();    
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IJWTFactory, JWTFactory>();
             services.AddScoped<IUserLogic, UserLogic>();
 
             services.AddControllers();
