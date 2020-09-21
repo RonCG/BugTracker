@@ -16,7 +16,7 @@ namespace BugTracker.Data
         public string Description { get; set; }
         public bool Active { get; set; }
         public DateTime CreateDate { get; set; }
-        public int CreateDby { get; set; }
+        public int CreatedBy { get; set; }
         public DateTime EditDate { get; set; }
         public int EditedBy { get; set; }
 

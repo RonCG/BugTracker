@@ -55,8 +55,7 @@ namespace BugTracker.Web.Controllers
 
 
 
-        //[Authorize(Roles = "Admin")]
-        [AllowAnonymous]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserModel user)
         {

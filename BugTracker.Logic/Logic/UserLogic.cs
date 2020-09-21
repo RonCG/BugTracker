@@ -20,16 +20,16 @@ namespace BugTracker.Logic.Logic
     public class UserLogic : IUserLogic
     {
         private readonly JWTSettings _jwtSettings;
-        private readonly IUnitOfWork _db;
+        private readonly IUnitOfWork _repositories;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IEmailService _emailService;
 
         public UserLogic(IOptions<JWTSettings> jwtSettings, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IEmailService emailService)
         {
             _jwtSettings = jwtSettings.Value;
-            _db = unitOfWork;
+            _repositories = unitOfWork;
             _passwordHasher = passwordHasher;
-            _emailService = emailService;
+            _emailService = emailService;         
         }
 
 
@@ -41,16 +41,16 @@ namespace BugTracker.Logic.Logic
         /// <returns></returns>
         public UserModel AuthenticateUser(AuthenticateModel request)
         {
-            UserModel retVal = null;
-            User user = _db.Users.Find(x => x.UserName == request.Username).FirstOrDefault();
-            if(user != null && user.StatusId == UserStatus.Active)
+            UserModel userDetail = null;
+            var user = _repositories.Users.Find(x => x.UserName == request.Username && x.StatusId == UserStatus.Active).FirstOrDefault();     
+            if (user != null)
             {
                 var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, request.Password);
-                if (Verified)
-                    retVal = (UserModel)user;
+                if (Verified)                
+                    userDetail = _repositories.Users.GetUserDetail(user.UserId);                 
             }
 
-            return retVal;
+            return userDetail;
         }
 
 
@@ -70,7 +70,7 @@ namespace BugTracker.Logic.Logic
                 new Claim("username", userInfo.FirstName + " " + userInfo.LastName)                
             };
 
-            claims.AddRange(userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            claims.AddRange(userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -88,22 +88,22 @@ namespace BugTracker.Logic.Logic
         public bool ResetPassword(ResetPasswordModel data)
         {
             bool retVal = false;
-            var passwordRequest = _db.PasswordRequest.Find(x => x.Token == data.Token && x.UserId == data.UserID && x.Active == true).FirstOrDefault();
+            var passwordRequest = _repositories.PasswordRequest.GetPasswordRequest(data);
             if (passwordRequest != null)
             {
-                User user = _db.Users.Get(passwordRequest.UserId); 
+                User user = _repositories.Users.Get(passwordRequest.UserId); 
                 if(user != null)
                 {
                     user.Password = _passwordHasher.Hash(data.NewPassword);
                     if (user.StatusId == UserStatus.Pending)
                         user.StatusId = UserStatus.Active;
-
-                    _db.Users.Update(user);
+                   
+                    _repositories.Users.Update(user);
 
                     passwordRequest.Active = false;
-                    _db.PasswordRequest.Update(passwordRequest);
+                    _repositories.PasswordRequest.Update(passwordRequest);
 
-                    _db.Complete();
+                    _repositories.SaveChanges();
                     retVal = true;
                 }
             }
@@ -122,31 +122,28 @@ namespace BugTracker.Logic.Logic
                 UserName = user.UserName,
                 Email = user.Email,
                 StatusId = UserStatus.Pending,
-                Password = string.Empty
+                Password = string.Empty,
+                Userrole = user.Roles.Select(x => _repositories.Users.SetCreateVars(new Userrole { RoleId = x.RoleId })).ToList()
             };
 
-            _db.Users.Add(newUser);
-            _db.Complete();
-
-            //add user roles... 
+            _repositories.Users.Add(newUser);
+            _repositories.SaveChanges();
+            user.UserId = newUser.UserId;
 
             Passwordrequest passwordRequest = new Passwordrequest
             {
-                UserId = newUser.UserId,
+                UserId = user.UserId,
                 Token = Guid.NewGuid().ToString(),
                 Active = true
             };
 
-            _db.PasswordRequest.Add(passwordRequest);
-            _db.Complete();
+            _repositories.PasswordRequest.Add(passwordRequest);
+            _repositories.SaveChanges();
 
-            _emailService.Send("***REMOVED***", newUser.Email, "Invite Test", "Hello!");            
- 
-            return (UserModel)newUser;
+            _emailService.Send("***REMOVED***", user.Email, "Invite Test", "Hello!");
+
+            return user;
         }
-
-
-
 
     }
 

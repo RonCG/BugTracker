@@ -12,27 +12,15 @@ namespace BugTracker.Data.Helpers
     public class RequestUser : IRequestUser
     {
         private readonly HttpContext _context;
-
-        public int UserID { get; set; }
-        public string UserName { get; set; }
-        public List<string> Roles { get; set; }
-
         public RequestUser(IHttpContextAccessor context)
         {
             _context = context.HttpContext;
-
-            var userId = _context.User.Claims.Where(x => x.Type == "userid").FirstOrDefault();
-            if (userId != null)
-                UserID = Convert.ToInt32(userId.Value);
-
-            var userName = _context.User.Claims.Where(x => x.Type == "username").FirstOrDefault();
-            if (userName != null)
-                UserName = userName.Value;
-
-            var roles = _context.User.Claims.Where(x => x.Type == ClaimTypes.Role).ToList();
-            if (roles != null)
-                Roles = roles.Select(x => x.Value).ToList();
         }
+
+        public int UserID => Convert.ToInt32(_context?.User?.Claims?.Where(x => x.Type == "userid").FirstOrDefault()?.Value);
+        public string UserName => _context?.User?.Claims?.Where(x => x.Type == "username").FirstOrDefault()?.Value;
+        public List<string> Roles => _context?.User?.Claims?.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
+
     }
 
 
@@ -42,8 +30,8 @@ namespace BugTracker.Data.Helpers
     /// </summary>
     public interface IRequestUser
     {
-        public int UserID { get; set; }
-        public string UserName { get; set; }
-        public List<string> Roles { get; set; }
+        public int UserID { get; }
+        public string UserName { get; }
+        public List<string> Roles { get; }
     }
 }

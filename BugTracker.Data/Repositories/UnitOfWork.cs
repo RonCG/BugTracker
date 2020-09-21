@@ -26,7 +26,7 @@ namespace BugTracker.Data.Repositories
             PasswordRequest = new PasswordRequestRepository(_context, _requestUser);
         }
 
-        public int Complete()
+        public int SaveChanges()
         {
             return _context.SaveChanges();
         }
@@ -48,6 +48,6 @@ namespace BugTracker.Data.Repositories
         IErrorLogRepository ErrorLog { get; }
         IPasswordRequestRepository PasswordRequest { get; }
 
-        int Complete();
+        int SaveChanges();
     }
 }

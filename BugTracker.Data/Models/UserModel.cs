@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BugTracker.Data.Models
@@ -16,7 +17,7 @@ namespace BugTracker.Data.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public int StatusID { get; set; }
-        public List<string> Roles { get; set; }
+        public List<RoleModel> Roles { get; set; }
 
         public static explicit operator UserModel(User v)
         {
@@ -27,11 +28,10 @@ namespace BugTracker.Data.Models
                 LastName = v.LastName,
                 UserName = v.UserName,
                 Email = v.Email,
-                Roles = new List<string>()
+                Roles = v.Userrole.Select(x => (RoleModel)x.Role).ToList()
             };
         }
     }
-
 
 
 
