@@ -35,7 +35,7 @@ export class AuthService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string) {
+    login(username: string, password: string): Observable<UserModel>{
         return this.http.post<any>(`api/user/authenticate`, { username, password })
             .pipe(
                 map(response => {

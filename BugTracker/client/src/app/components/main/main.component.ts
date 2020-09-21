@@ -16,13 +16,13 @@ export class MainComponent implements OnInit {
             label: 'Bug Tracker',
             items: [
                {separator: true},
-               {label: 'Home', icon: 'pi pi-fw pi-home'},
+               {label: 'Home', icon: 'pi pi-fw pi-home',  routerLink: 'home'},
                {label: 'Projects', icon: 'pi pi-fw pi-th-large'},
                {label: 'Tasks', icon: 'pi pi-fw pi-list'},
                {label: 'Bugs', icon: 'pi pi-fw pi-times-circle'},
-               {label: 'Users & Roles', icon: 'pi pi-fw pi-users'},
+               {label: 'Users & Roles', icon: 'pi pi-fw pi-users', routerLink: 'users-roles'},
                {separator: true},
-               {label: 'Logout', icon: 'pi pi-fw pi-sign-out',  command: () => this.logout()},
+               {label: 'Logout', icon: 'pi pi-fw pi-sign-out',  styleClass: 'logout', command: () => this.logout()},
             ]
         }];
     }
