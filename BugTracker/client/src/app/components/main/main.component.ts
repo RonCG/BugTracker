@@ -13,7 +13,7 @@ export class MainComponent implements OnInit {
 
     ngOnInit() {
         this.items = [{
-            label: 'Bug Tracker',
+            label: 'Bug Tracker',    
             items: [
                {separator: true},
                {label: 'Home', icon: 'pi pi-fw pi-home',  routerLink: 'home'},

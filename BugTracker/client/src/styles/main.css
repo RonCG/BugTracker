@@ -1,0 +1,33 @@
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    grid-template-rows: 100%;
+    grid-template-areas: "sidenav main";
+    height: 100%;
+    height: -moz-available;          /* WebKit-based browsers will ignore this. */
+    height: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+}
+
+.sienav {
+    grid-area: sidenav;
+}
+
+.p-menu {
+    height: 100%;
+    width: 100%;
+}
+
+.p-submenu-header {
+    text-align: center;
+}
+
+.logout {
+    margin-top: 400px;
+}
+
+.main-content {
+    grid-area: main;
+    margin: 3rem;
+}
+    
+  

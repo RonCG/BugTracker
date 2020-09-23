@@ -1,22 +1,2 @@
-/* You can add global styles to this file, and also import other style files */
-.sidenav {
-    height: 100%;
-    width: 200px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-  }
-
-  .logout{
-      margin-top: 400px;
-  }
-
-  .p-menu{
-      height: 100%;
-  }
-
-  .main {
-    margin-left: 200px; /* Same as the width of the sidenav */
-  }
+@import "./styles/main.css";
+@import "./styles/form.css";

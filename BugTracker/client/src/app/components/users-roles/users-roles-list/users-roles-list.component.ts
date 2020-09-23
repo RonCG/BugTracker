@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -6,9 +7,14 @@ import { Component, OnInit } from "@angular/core";
 })
 export class UsersAndRolesListComponent implements OnInit {
 
+    constructor(
+        private router: Router
+    )
+    {}
     ngOnInit(): void {
-        //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-        //Add 'implements OnInit' to the class.
-        
+    }
+
+    newUser(){
+        this.router.navigate([`${this.router.url}/user/`, -1]);
     }
 }
