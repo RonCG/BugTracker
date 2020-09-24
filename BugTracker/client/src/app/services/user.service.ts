@@ -1,4 +1,4 @@
-import { RoleModel } from './../models/RoleModel';
+import { UserModel } from '../models/UserModel';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -6,13 +6,13 @@ import { Injectable } from '@angular/core';
 @Injectable({
     providedIn: "root"
 })
-export class RoleService {
+export class UserService {
 
     constructor(
         private http: HttpClient
     ) {}
 
-    getRoles(): Observable<RoleModel[]>{
-        return this.http.get<RoleModel[]>(`api/role`);
+    getUserDetail(userID: number): Observable<UserModel>{
+        return this.http.get<UserModel>(`api/user/${userID}`);
     }
 }

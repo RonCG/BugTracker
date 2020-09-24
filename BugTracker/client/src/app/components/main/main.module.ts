@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { UsersAndRolesComponent } from './../users-roles/users-roles.component';
 import { UserDetailComponent } from './../users-roles/user-detail/user-detail.component';
 import { MenuModule } from 'primeng/menu';
@@ -16,12 +17,13 @@ import { ButtonModule } from 'primeng/button';
         UsersAndRolesComponent,
         UserDetailComponent
     ],
-    imports: [
+    imports: [  
         ReactiveFormsModule,
         MainRoutingModule,
         MenuModule,
         InputTextModule,
-        ButtonModule
+        ButtonModule,
+        CommonModule,
     ],
     exports: [MainComponent],
     providers: []

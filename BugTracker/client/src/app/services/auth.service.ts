@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { UserModel } from '../models/UserModel';
+import { UserSessionModel } from '../models/UserSessionModel';
 import { Router } from '@angular/router';
 import { tap, map } from 'rxjs/operators';
 
@@ -11,31 +11,31 @@ import { tap, map } from 'rxjs/operators';
 
 export class AuthService {
 
-    private currentUserSubject: BehaviorSubject<UserModel>;
-    public currentUser: Observable<UserModel>;
+    private currentUserSubject: BehaviorSubject<UserSessionModel>;
+    public currentUser: Observable<UserSessionModel>;
 
     constructor(
         private http: HttpClient,
         private router: Router
     ) {
-        this.currentUserSubject = new BehaviorSubject<UserModel>(null);
+        this.currentUserSubject = new BehaviorSubject<UserSessionModel>(null);
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public setUserData(): UserModel {
+    public setUserData(): UserSessionModel {
         const token = localStorage.getItem('token');
         if(!token)
             return null;
         
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return new UserModel(payload.userid, payload.username, payload.role, token, new Date(payload.exp * 1000));
+        return new UserSessionModel(payload.userid, payload.username, payload.role, token, new Date(payload.exp * 1000));
     }
 
-    public get currentUserValue(): UserModel {
+    public get currentUserValue(): UserSessionModel {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string): Observable<UserModel>{
+    login(username: string, password: string): Observable<UserSessionModel>{
         return this.http.post<any>(`api/user/authenticate`, { username, password })
             .pipe(
                 map(response => {

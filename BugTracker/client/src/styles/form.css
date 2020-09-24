@@ -9,6 +9,7 @@
     flex-direction: column;
 }
 
-.form-label {
+.form-container label {
     color: #4a4945;
 }
+
