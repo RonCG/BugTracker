@@ -26,6 +26,12 @@ namespace BugTracker.Data.Repositories
 
 
 
+        public UserModel GetUserByUsername(string username)
+        {
+            return _db.User.Where(x => x.UserName == username && x.StatusId == UserStatus.Active).Select(x => (UserModel)x).FirstOrDefault();
+        }
+
+
 
         /// <summary>
         /// Returns the roles of the given user
@@ -54,6 +60,7 @@ namespace BugTracker.Data.Repositories
     public interface IUserRepository : IBaseRepository<User>
     {
         UserModel GetUserDetail(int userID);
+        UserModel GetUserByUsername(string username);
         List<RoleModel> GetUserRoles(int userID);
 
     }

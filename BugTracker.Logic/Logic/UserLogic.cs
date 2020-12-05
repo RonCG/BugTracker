@@ -36,7 +36,7 @@ namespace BugTracker.Logic.Logic
         public string AuthenticateUser(AuthenticateModel request)
         {
             string jwtToken = string.Empty;
-            var user = _repositories.Users.Find(x => x.UserName == request.Username && x.StatusId == UserStatus.Active).FirstOrDefault();
+            var user = _repositories.Users.Find(x => x.UserName == request.Username).FirstOrDefault();
             if (user != null)
             {
                 var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, request.Password);
@@ -48,35 +48,11 @@ namespace BugTracker.Logic.Logic
         }
 
 
-
-        public bool ResetPassword(ResetPasswordModel data)
-        {
-            bool retVal = false;
-            var passwordRequest = _repositories.PasswordRequest.GetPasswordRequest(data);
-            if (passwordRequest != null)
-            {
-                User user = _repositories.Users.Get(passwordRequest.UserId); 
-                if(user != null)
-                {
-                    user.Password = _passwordHasher.Hash(data.NewPassword);
-                    if (user.StatusId == UserStatus.Pending)
-                        user.StatusId = UserStatus.Active;
-                   
-                    _repositories.Users.Update(user);
-
-                    passwordRequest.Active = false;
-                    _repositories.PasswordRequest.Update(passwordRequest);
-
-                    _repositories.SaveChanges();
-                    retVal = true;
-                }
-            }
-
-            return retVal;
-        }
-
-
-
+        /// <summary>
+        /// Creates a new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public UserModel CreateNew(UserModel user)
         {
             User newUser = new User
@@ -109,6 +85,71 @@ namespace BugTracker.Logic.Logic
             return user;
         }
 
+
+
+        /// <summary>
+        /// Sends a reset password email to a user 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public bool ForgotPassword(string username)
+        {
+            bool retVal = false;
+
+            var user = _repositories.Users.GetUserByUsername(username);
+            if(user != null)
+            {               
+                Passwordrequest passwordRequest = new Passwordrequest
+                {
+                    UserId = user.UserId,
+                    Token = Guid.NewGuid().ToString(),
+                    Active = true
+                };
+
+                _repositories.PasswordRequest.Add(passwordRequest);
+                _repositories.SaveChanges();
+
+                //send mail
+                _emailService.Send("***REMOVED***", user.Email, "Forgot password", "Hello!");
+
+                retVal = true;
+            }
+            return retVal;
+        }
+
+
+
+        /// <summary>
+        /// Resets a user password
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public bool ResetPassword(ResetPasswordModel data)
+        {
+            bool retVal = false;
+            var passwordRequest = _repositories.PasswordRequest.GetPasswordRequest(data);
+            if (passwordRequest != null)
+            {
+                User user = _repositories.Users.Get(passwordRequest.UserId); 
+                if(user != null)
+                {
+                    user.Password = _passwordHasher.Hash(data.NewPassword);
+                    if (user.StatusId == UserStatus.Pending)
+                        user.StatusId = UserStatus.Active;
+                   
+                    _repositories.Users.Update(user);
+
+                    passwordRequest.Active = false;
+                    _repositories.PasswordRequest.Update(passwordRequest);
+
+                    _repositories.SaveChanges();
+                    retVal = true;
+                }
+            }
+
+            return retVal;
+        }
+
     }
 
 
@@ -120,6 +161,7 @@ namespace BugTracker.Logic.Logic
     {
         string AuthenticateUser(AuthenticateModel request);
         UserModel CreateNew(UserModel user);
+        bool ForgotPassword(string username);
         bool ResetPassword(ResetPasswordModel data);
     }
 }

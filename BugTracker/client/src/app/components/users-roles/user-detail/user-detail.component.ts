@@ -51,14 +51,14 @@ export class UserDetailComponent implements OnInit {
     }
     
     initForm(){
-        this.lookupService.getLookUp(LookupTypeConsts.Roles, true).subscribe(
-            rolesLookup => {
-                this.rolesLookup = rolesLookup;
+        // this.lookupService.getLookUp(LookupTypeConsts.Roles, true).subscribe(
+        //     rolesLookup => {
+        //         this.rolesLookup = rolesLookup;
                 this.userForm = this.generateUserForm();
-            }, 
-            error => {
-               //show error message with toaster... 
-            });
+            // }, 
+            // error => {
+            //    //show error message with toaster... 
+            // });
     }
 
     generateUserForm(){

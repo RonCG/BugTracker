@@ -26,7 +26,7 @@ namespace BugTracker.Web.Controllers
         }
 
 
-        // POST: api/user/authenticate
+
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public IActionResult AuthenticateUser([FromBody] AuthenticateModel model)
@@ -41,24 +41,40 @@ namespace BugTracker.Web.Controllers
 
 
 
-        [AllowAnonymous]
-        [HttpPost("resetpassword")]
-        public IActionResult ResetPassword([FromBody] ResetPasswordModel data)
-        {
-            var result = _userLogic.ResetPassword(data);
-            if(result)
-                return Ok(result); 
-
-            return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "Something went wrong. Please try again"));
-        }
-
-
-
         [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserModel user)
         {
             return Ok(_userLogic.CreateNew(user));
         }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("forgotpassword")]
+        public IActionResult ForgotPassword([FromBody] string username)
+        {
+            var result = _userLogic.ForgotPassword(username);
+            if (!result)
+                return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "User not found"));
+                
+            return Ok();
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("resetpassword")]
+        public IActionResult ResetPassword([FromBody] ResetPasswordModel data)
+        {
+            var result = _userLogic.ResetPassword(data);
+            if(!result)
+                return BadRequest(ErrorDetails.SetError(StatusCodes.Status400BadRequest, "Something went wrong. Please try again later."));
+                
+            return Ok(); 
+        }
+
+
+
     }
 }
