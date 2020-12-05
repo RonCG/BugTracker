@@ -11,6 +11,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: windows-latest
+    env: 
+      server-dir: ./BugTracker
+      client-dir: ./BugTracker/client
 
     steps:
     - uses: actions/checkout@master
@@ -20,8 +23,21 @@ jobs:
       with:
         dotnet-version: '3.1.102'
 
+    - name: Set up .Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.18.2'
+
+    - name: Build with Node
+      working-directory: ${{env.client-dir}}
+      run: 
+        - npm install         
+        - ng build --prod
+
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      working-directory: ${{env.server-dir}}
+      run:         
+        - dotnet build --configuration Release
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
