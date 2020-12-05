@@ -31,6 +31,7 @@ jobs:
     - name: Build with Node
       working-directory: ${{env.client-dir}}
       run: |
+          npm install -g @angular/cli@10.0.4
           npm install         
           ng build --prod
 
