@@ -80,7 +80,7 @@ namespace BugTracker.Logic.Logic
             _repositories.PasswordRequest.Add(passwordRequest);
             _repositories.SaveChanges();
 
-            _emailService.Send("***REMOVED***", user.Email, "Invite Test", "Hello!");
+            _emailService.Send("ronny1612695@gmail.com", user.Email, "Invite Test", "Hello!");
 
             return user;
         }
@@ -110,7 +110,7 @@ namespace BugTracker.Logic.Logic
                 _repositories.SaveChanges();
 
                 //send mail
-                _emailService.Send("***REMOVED***", user.Email, "Forgot password", "Hello!");
+                _emailService.Send("ronny1612695@gmail.com", user.Email, "Forgot password", "Hello!");
 
                 retVal = true;
             }
